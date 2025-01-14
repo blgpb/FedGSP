@@ -165,7 +165,6 @@ def compute_principal_angles_k(A, B):
 
     k = A.shape[0]
 
-    # 计算向量的范数
     norm_A = torch.norm(A, dim=1, keepdim=True)
     norm_B = torch.norm(B, dim=1)
 
@@ -386,7 +385,6 @@ def PropMatrix(adj):
     del row_sum
     gc.collect()
     d_inv_sqrt[np.isinf(d_inv_sqrt)] = 0.
-
     t = time.time()
     d_mat_inv_sqrt = sp.diags(d_inv_sqrt)
     adj = d_mat_inv_sqrt.dot(adj).dot(d_mat_inv_sqrt)
@@ -397,15 +395,12 @@ def edgeindex_construct(edge_index, num_nodes):
     if not is_undirected(edge_index):
         edge_index = to_undirected(edge_index)
     edge_index = edge_index.numpy()
-
     num_edges = edge_index[0].shape[0]
     data = np.array([1] * num_edges)
     adj = sp.coo_matrix((data, (edge_index[0], edge_index[1])), shape=(num_nodes, num_nodes)).tocsr()
-
     t = time.time()
     adj = PropMatrix(adj)
     Propagate_matrix_time = time.time() - t
-
     t = time.time()
     adj = sparse_mx_to_torch_sparse_tensor(adj).float()
     sparse_mx_time = time.time() - t
@@ -432,7 +427,6 @@ def load_dataset(LP, feat, K=6, tau=1.0, homo_ratio=0.6, plain=False):
     num_nodes, dim = feat.shape
 
     cosval = math.cos(math.pi * (1.0 - homo_ratio) / 2.0)
-
     if not plain:
         t1 = time.time()
         norm = torch.norm(feat, dim=0)
@@ -527,7 +521,6 @@ def Update_W(optimizer_s, W, r, s, P, Q, B, gamma, one_vector, similarity_para, 
     S = torch.diag(s)
     P_R = torch.mm(R, P.T)
     Q_S = torch.mm(S, Q.T)
-
     if P.shape[1] == (args.k_principal * args.K * args.n_feat):
         P_R = P_R.reshape(-1, args.k_principal, args.n_feat * args.K)
         Q_S = Q_S.reshape(-1, args.k_principal, args.n_feat * args.K)
@@ -538,34 +531,23 @@ def Update_W(optimizer_s, W, r, s, P, Q, B, gamma, one_vector, similarity_para, 
     for i in range(M):
         for j in range(i, M):
             phi = compute_principal_angles_k(P_R[i], P_R[j])
-
             principal_angle = torch.cos((1 / 3) * torch.sum(phi))
-
             phi_yizhi = compute_principal_angles_k(Q_S[i], Q_S[j])
-
             principal_angle_yizhi = torch.cos((1 / 3) * torch.sum(phi_yizhi))
-
             t_ij[i, j] = complementarity_para * principal_angle_yizhi - similarity_para * principal_angle
             t_ij[j, i] = complementarity_para * principal_angle_yizhi - similarity_para * principal_angle
-
     h_ij = torch.zeros((M, M)).cuda()
     for i in range(M):
         for j in range(i, M):
             h_ij[i, j] = 1 / M - t_ij[i, j] / (2 * gamma) + torch.mm(one_vector.T, t_ij[i, :].unsqueeze(dim=1)) / (
                     2 * M * gamma)
             h_ij[j, i] = h_ij[i, j]
-
     for idx in range(M):
         b_i = B[idx].unsqueeze(dim=0)
-
         loss = (1 / M) * torch.sum(torch.nn.functional.relu(b_i - h_ij[idx, :])) - b_i
-
         grad_loss = torch.autograd.grad(loss, b_i, create_graph=True)[0]
-
         delta_b = loss / grad_loss
-
         B[idx] = B[idx] - delta_b.item()
-
         W[idx, :] = torch.nn.functional.relu(h_ij[idx, :] - B[idx])
 
     return W
@@ -574,14 +556,12 @@ def Update_W(optimizer_s, W, r, s, P, Q, B, gamma, one_vector, similarity_para, 
 def optimize_graph_matrix_K(graph_matrix_K, principal_list_K, principal_list2_K, B, gamma, opt_server_K,
                             one_vector, similarity_para, complementarity_para, args):
     optimizer_server_state = {}
-
     for ids in range(graph_matrix_K.shape[0]):
         r, L = Update_R(graph_matrix_K[ids], principal_list2_K[ids])
         s = Update_S(principal_list_K[ids], L)
         graph_matrix_K[ids] = Update_W(opt_server_K[ids], graph_matrix_K[ids], r, s, principal_list2_K[ids],
                                        principal_list_K[ids], B[ids], gamma, one_vector, similarity_para,
                                        complementarity_para, args)
-
     return graph_matrix_K, optimizer_server_state
 
 
@@ -589,14 +569,10 @@ def optimize_graph_matrix_overall_K(graph_matrix, principal_list, principal_list
                                     one_vector, similarity_para, complementarity_para, args):
     principal_list = torch.tensor(principal_list)
     principal_list = principal_list.reshape(graph_matrix.shape[0], -1).cuda()
-
     principal_list2 = torch.tensor(principal_list2)
     principal_list2 = principal_list2.reshape(graph_matrix.shape[0], -1).cuda()
-
     r, L = Update_R(graph_matrix, principal_list2)
-
     s = Update_S(principal_list, L)
-
     graph_matrix = Update_W(opt, graph_matrix, r, s, principal_list2,
                             principal_list, B, gamma, one_vector, similarity_para, complementarity_para, args)
 
