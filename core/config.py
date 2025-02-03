@@ -575,6 +575,7 @@ def get_args():
     elif args.dataset == 'ogbn-arxiv':
         if args.mode == 'disjoint':
             if args.n_clients == 5:
+                args.k_principal = 1
                 args.gamma = 1
                 args.K = 14
                 args.n_latentdims = 1024
@@ -592,6 +593,7 @@ def get_args():
                 args.comm_round = 200
                 args.n_eps = 2
             elif args.n_clients == 10:
+                args.k_principal = 1
                 args.gamma = 1
                 args.K = 15
                 args.n_latentdims = 1024
@@ -609,6 +611,7 @@ def get_args():
                 args.comm_round = 200
                 args.n_eps = 2
             elif args.n_clients == 20:
+                args.k_principal = 1
                 args.gamma = 2
                 args.K = 15
                 args.n_latentdims = 1024
@@ -627,6 +630,7 @@ def get_args():
                 args.n_eps = 2
         elif args.mode == 'overlapping':
             if args.n_clients == 10:
+                args.k_principal = 1
                 args.K = 13
                 args.n_latentdims = 512
                 args.n_layers = 3
@@ -643,6 +647,7 @@ def get_args():
                 args.comm_round = 200
                 args.n_eps = 2
             elif args.n_clients == 30:
+                args.k_principal = 1
                 args.K = 13
                 args.n_latentdims = 512
                 args.n_layers = 3
@@ -659,6 +664,7 @@ def get_args():
                 args.comm_round = 200
                 args.n_eps = 2
             elif args.n_clients == 50:
+                args.k_principal = 1
                 args.gamma = 10
                 args.K = 13
                 args.n_latentdims = 256
@@ -953,7 +959,7 @@ def get_args():
                 args.tau = 0.7
                 args.matrix_alpha = 0.28
                 args.lam = 0.001
-                args.matrix_beta = 2.2
+                args.matrix_beta = 1.2
             elif args.n_clients == 10:
                 args.gamma = 1.6
                 args.K = 10
@@ -968,6 +974,7 @@ def get_args():
                 args.tau = 0.7
                 args.matrix_alpha = 0.2
                 args.lam = 0.001
+                args.matrix_beta = 1.2
             elif args.n_clients == 20:
                 args.gamma = 10
                 args.K = 12
