@@ -1,10 +1,10 @@
-![FedGSP Logo](FedGSP_logo.png)
+![FedICI logo](FedICI_logo.png)
 
-# FedGSP: Addressing Homophily Heterogeneity in Graph Federated Learning via Spectral Properties
+# Integrating Commonality and Individuality for Graph Federated Learning: A Graph Spectrum Perspective
 
 Official Code Repository for our paper:
 
-FedGSP: Addressing Homophily Heterogeneity in Graph Federated Learning via Spectral Properties
+Integrating Commonality and Individuality for Graph Federated Learning: A Graph Spectrum Perspective
 
 
 ## Highlights
