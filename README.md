@@ -1,10 +1,10 @@
-![FedICI logo](FedICI_logo.png)
+![FedGSP logo](FedGSP_logo.png)
 
-# Integrating Commonality and Individuality for Graph Federated Learning: A Graph Spectrum Perspective
+# Homophily Heterogeneity Matters in Graph Federated Learning: A Spectrum Sharing and Complementing Perspective
 
 Official Code Repository for our paper:
 
-Integrating Commonality and Individuality for Graph Federated Learning: A Graph Spectrum Perspective
+Homophily Heterogeneity Matters in Graph Federated Learning: A Spectrum Sharing and Complementing Perspective
 
 
 ## Highlights
