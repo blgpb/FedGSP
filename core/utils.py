@@ -11,7 +11,7 @@ import time
 import gc
 import math
 
-from FedSaC_code.config import get_args
+from core.config import get_args
 
 
 def compute_local_test_accuracy(model, dataloader, data_distribution):
